@@ -8,7 +8,7 @@ async function getQuizzes(req, res, next) {
     const data = [];
     const subjects = await Object.keys(quizzes);
     for (const subject of subjects) {
-      const {questions, ...result} = await quizzes[subject];
+      const { questions, ...result } = await quizzes[subject];
       data.push(result);
     }
     res.send(data);
@@ -22,7 +22,25 @@ async function getQuizzes(req, res, next) {
  * Returns quiz data for the given ID, omitting the answers
  */
 async function getQuiz(req, res, next) {
-  // TODO: Your code goes here
+  const ident = req.params.id;
+  try {
+    const subjects = await Object.keys(quizzes);
+    for (const subject of subjects) {
+      const obj = await quizzes[subject];
+      if (obj.id === ident) {
+        // remove answers
+        obj.questions.forEach((question) => {
+          delete question.answer;
+        });
+        res.send(obj);
+        return;
+      }
+    }
+    res.sendStatus(404);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(404);
+  }
 }
 
 /**
