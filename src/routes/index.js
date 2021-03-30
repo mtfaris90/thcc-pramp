@@ -47,7 +47,30 @@ async function getQuiz(req, res, next) {
  * Handles a quiz submission and returns a graded result
  */
 async function postQuiz(req, res, next) {
-  // TODO: Your code goes here
+  const ident = req.params.id;
+  const contents = req.body;
+  try {
+    const subjects = await Object.keys(quizzes);
+    for (const subject of subjects) {
+      const obj = await quizzes[subject];
+      if (obj.id === ident) {
+        const graded = { correct: 0, incorrect: 0, questions: {} };
+        Object.keys(contents.answers).forEach((key) => {
+          const index = Number(
+            key[key.length - 1]
+          ) - 1;
+          const isCorrect =
+            contents.answers[key] === obj.questions[index].answer;
+          isCorrect ? (graded.correct += 1) : (graded.incorrect += 1);
+          graded.questions[key] = isCorrect;
+        });
+        res.send(graded);
+      }
+    }
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(400);
+  }
 }
 
 module.exports = {
