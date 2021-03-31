@@ -5,13 +5,13 @@ const quizzes = require("../../data/quizzes.json");
  */
 async function getQuizzes(req, res, next) {
   try {
-    const data = [];
-    const subjects = await Object.keys(quizzes);
+    const data = []; // response array to be filled
+    const subjects = await Object.keys(quizzes); // obtain subjects from mock database
     for (const subject of subjects) {
-      const { questions, ...result } = await quizzes[subject];
-      data.push(result);
+      const { questions, ...result } = await quizzes[subject]; // collect relevant data
+      data.push(result); // add relevant data to array
     }
-    res.send(data);
+    res.send(data); // send filled array
   } catch (e) {
     console.log(e);
     res.sendStatus(404);
@@ -24,19 +24,18 @@ async function getQuizzes(req, res, next) {
 async function getQuiz(req, res, next) {
   const ident = req.params.id;
   try {
-    const subjects = await Object.keys(quizzes);
+    const subjects = await Object.keys(quizzes); // obtain subjects from mock database
     for (const subject of subjects) {
-      const obj = await quizzes[subject];
-      if (obj.id === ident) {
-        // remove answers
+      const obj = await quizzes[subject];  // obtain data object for subject
+      if (obj.id === ident) { // when subject id matches request id
         obj.questions.forEach((question) => {
-          delete question.answer;
+          delete question.answer; // remove answers
         });
-        res.send(obj);
+        res.send(obj); // send remaining info
         return;
       }
     }
-    res.sendStatus(404);
+    res.sendStatus(404); // if not found, send 404
   } catch (e) {
     console.log(e);
     res.sendStatus(404);
@@ -50,21 +49,21 @@ async function postQuiz(req, res, next) {
   const ident = req.params.id;
   const contents = req.body;
   try {
-    const subjects = await Object.keys(quizzes);
+    const subjects = await Object.keys(quizzes); // obtain subjects from mock database
     for (const subject of subjects) {
-      const obj = await quizzes[subject];
-      if (obj.id === ident) {
-        const graded = { correct: 0, incorrect: 0, questions: {} };
+      const obj = await quizzes[subject]; // obtain data object for subject
+      if (obj.id === ident) { // when subject id matches request id
+        const graded = { correct: 0, incorrect: 0, questions: {} }; // create response object
         Object.keys(contents.answers).forEach((key) => {
           const index = Number(
             key[key.length - 1]
-          ) - 1;
+          ) - 1; // determine last char of key
           const isCorrect =
-            contents.answers[key] === obj.questions[index].answer;
-          isCorrect ? (graded.correct += 1) : (graded.incorrect += 1);
+            contents.answers[key] === obj.questions[index].answer; // determine if answer matches answer key
+          isCorrect ? (graded.correct += 1) : (graded.incorrect += 1); // increment correct/incorrect accordingly
           graded.questions[key] = isCorrect;
         });
-        res.send(graded);
+        res.send(graded); // send response object
       }
     }
   } catch (e) {
