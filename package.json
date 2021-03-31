@@ -10,10 +10,11 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.1"
+    "react-scripts": "4.0.1",
+    "supertest": "^6.1.3"
   },
   "scripts": {
-    "start": "./node_modules/nodemon/bin/nodemon.js ./src/index",
+    "start": "./node_modules/nodemon/bin/nodemon.js ./src/server",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

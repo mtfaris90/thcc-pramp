@@ -15,6 +15,8 @@ app.get('/api/quizzes', Routes.getQuizzes);
 app.get('/api/quizzes/:id', Routes.getQuiz);
 app.post('/api/quizzes/:id/attempt', Routes.postQuiz);
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server running at http://localhost:${port}`);
+// });
+
+module.exports = app
