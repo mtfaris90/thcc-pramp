@@ -6,9 +6,7 @@ describe("API", () => {
 
   beforeEach(() => {
     const port = process.env.PORT || 3000;
-    currentServer = app.listen(port, () => {
-      console.log(`Server running at http://localhost:${port}`);
-    });
+    currentServer = app.listen(port);
   });
 
   afterEach(() => {

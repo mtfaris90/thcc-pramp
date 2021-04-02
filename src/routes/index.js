@@ -8,13 +8,13 @@ async function getQuizzes(req, res, next) {
     const data = []; // response array to be filled
     const subjects = await Object.keys(quizzes); // obtain subjects from mock database
     for (const subject of subjects) {
-      const { questions, ...result } = await quizzes[subject]; // collect relevant data
+      const { questions, ...result } = await quizzes[subject]; // collect relevant data w/ obj destructuring and spread operator
       data.push(result); // add relevant data to array
     }
     res.send(data); // send filled array
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(404);
+  } catch (err) {
+    console.log(`Error Processing Request: ${err}`);
+    res.sendStatus(500);
   }
 }
 
@@ -22,12 +22,12 @@ async function getQuizzes(req, res, next) {
  * Returns quiz data for the given ID, omitting the answers
  */
 async function getQuiz(req, res, next) {
-  const ident = req.params.id;
+  const reqID = req.params.id;
   try {
     const subjects = await Object.keys(quizzes); // obtain subjects from mock database
     for (const subject of subjects) {
       const obj = await quizzes[subject];  // obtain data object for subject
-      if (obj.id === ident) { // when subject id matches request id
+      if (obj.id === reqID) { // when subject id matches request id
         obj.questions.forEach((question) => {
           delete question.answer; // remove answers
         });
@@ -36,9 +36,9 @@ async function getQuiz(req, res, next) {
       }
     }
     res.sendStatus(404); // if not found, send 404
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(404);
+  } catch (err) {
+    console.log(`Error Processing Request: ${err}`);
+    res.sendStatus(500);
   }
 }
 
@@ -46,13 +46,13 @@ async function getQuiz(req, res, next) {
  * Handles a quiz submission and returns a graded result
  */
 async function postQuiz(req, res, next) {
-  const ident = req.params.id;
+  const reqID = req.params.id;
   const contents = req.body;
   try {
     const subjects = await Object.keys(quizzes); // obtain subjects from mock database
     for (const subject of subjects) {
       const obj = await quizzes[subject]; // obtain data object for subject
-      if (obj.id === ident) { // when subject id matches request id
+      if (obj.id === reqID) { // when subject id matches request id
         const graded = { correct: 0, incorrect: 0, questions: {} }; // create response object
         Object.keys(contents.answers).forEach((key) => {
           const index = Number(
@@ -64,11 +64,13 @@ async function postQuiz(req, res, next) {
           graded.questions[key] = isCorrect;
         });
         res.send(graded); // send response object
+        return;
       }
     }
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(400);
+    res.sendStatus(404); // if not found, send 404
+  } catch (err) {
+    console.log(`Error Processing Request: ${err}`);
+    res.sendStatus(500);
   }
 }
 
