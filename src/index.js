@@ -3,7 +3,6 @@ const bodyParser = require('body-parser')
 const path = require('path');
 const Routes = require('./routes');
 
-const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(bodyParser.json());
@@ -15,8 +14,5 @@ app.get('/api/quizzes', Routes.getQuizzes);
 app.get('/api/quizzes/:id', Routes.getQuiz);
 app.post('/api/quizzes/:id/attempt', Routes.postQuiz);
 
-// app.listen(port, () => {
-//   console.log(`Server running at http://localhost:${port}`);
-// });
 
 module.exports = app
